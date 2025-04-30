@@ -24,10 +24,27 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      authProvider.checkAuthState().then((_) {
+        final hasPin = authProvider.isAuthenticated;
+        setState(() {
+          _showKeyInput = !hasPin;
+        });
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Авторизация'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(

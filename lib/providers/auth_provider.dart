@@ -84,17 +84,24 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> checkAuthState() async {
     try {
-      final hasPin = await _dbService.hasPin();
-      if (hasPin) {
-        final apiKey = await _dbService.getApiKey();
-        if (apiKey != null) {
-          _apiClient.setApiKey(apiKey);
-          _isAuthenticated = true;
-        }
-      }
+      _isLoading = true;
       notifyListeners();
+
+      final apiKey = await _dbService.getApiKey();
+      final pin = await _dbService.getPin();
+
+      if (apiKey != null && pin != null) {
+        _apiClient.setApiKey(apiKey);
+        _isAuthenticated = true;
+      } else {
+        _isAuthenticated = false;
+      }
     } catch (e) {
       debugPrint('Error checking auth state: $e');
+      _isAuthenticated = false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }
