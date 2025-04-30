@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/chat_provider.dart';
 import 'chat_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -109,6 +110,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                 final success = await authProvider
                                     .validateKey(_keyController.text);
                                 if (success) {
+                                  final chatProvider =
+                                      Provider.of<ChatProvider>(context,
+                                          listen: false);
+                                  await chatProvider.loadModels();
+                                  await chatProvider.loadBalance();
                                   setState(() {
                                     _showKeyInput = false;
                                   });

@@ -66,10 +66,10 @@ class ChatProvider with ChangeNotifier {
       // Логирование начала инициализации
       _log('Initializing provider...');
       // Загрузка доступных моделей
-      await _loadModels();
+      await loadModels();
       _log('Models loaded: $_availableModels');
       // Загрузка баланса
-      await _loadBalance();
+      await loadBalance();
       _log('Balance loaded: $_balance');
       // Загрузка истории сообщений
       await _loadHistory();
@@ -82,7 +82,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   // Метод загрузки доступных моделей
-  Future<void> _loadModels() async {
+  Future<void> loadModels() async {
     try {
       // Получение списка моделей из API
       _availableModels = await _api.getModels();
@@ -102,7 +102,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   // Метод загрузки баланса пользователя
-  Future<void> _loadBalance() async {
+  Future<void> loadBalance() async {
     try {
       // Получение баланса из API
       _balance = await _api.getBalance();
@@ -252,7 +252,7 @@ class ChatProvider with ChangeNotifier {
         await _saveMessage(aiMessage);
 
         // Обновление баланса после успешного сообщения
-        await _loadBalance();
+        await loadBalance();
       } else {
         throw Exception('Invalid API response format');
       }
@@ -293,6 +293,19 @@ class ChatProvider with ChangeNotifier {
     // Очистка данных аналитики
     _analytics.clearData();
     // Уведомление слушателей об изменениях
+    notifyListeners();
+  }
+
+  // Сброс баланса
+  void resetBalance() {
+    _balance = '0.00';
+    notifyListeners();
+  }
+
+  // Сброс списка моделей
+  void resetModels() {
+    _availableModels.clear();
+    _currentModel = null;
     notifyListeners();
   }
 

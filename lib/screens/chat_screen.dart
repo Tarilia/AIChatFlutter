@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 // Импорт провайдера чата
 import '../providers/chat_provider.dart';
+import '../providers/auth_provider.dart';
+import '../screens/auth_screen.dart';
 // Импорт модели сообщения
 import '../models/message.dart';
 
@@ -263,6 +265,27 @@ class ChatScreen extends StatelessWidget {
           _buildModelSelector(context),
           const Spacer(),
           _buildBalanceDisplay(context),
+          IconButton(
+            icon: const Icon(Icons.vpn_key, size: 16),
+            color: Colors.white,
+            onPressed: () {
+              // Сбрасываем аутентификацию
+              context.read<AuthProvider>().resetAuth();
+
+              // Сбрасываем состояние чата
+              final chatProvider = context.read<ChatProvider>();
+              chatProvider.clearHistory();
+              chatProvider.resetBalance();
+              chatProvider.resetModels();
+
+              // Переходим на экран авторизации
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AuthScreen()),
+              );
+            },
+            tooltip: 'Сменить ключ',
+          ),
           _buildMenuButton(context),
         ],
       ),
