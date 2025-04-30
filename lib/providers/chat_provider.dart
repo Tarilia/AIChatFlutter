@@ -365,8 +365,6 @@ class ChatProvider with ChangeNotifier {
 
   // Метод экспорта истории
   Future<Map<String, dynamic>> exportHistory() async {
-    // Получение статистики из базы данных
-    final dbStats = await _db.getStatistics();
     // Получение статистики аналитики
     final analyticsStats = _analytics.getStatistics();
     // Получение данных сессий
@@ -380,7 +378,6 @@ class ChatProvider with ChangeNotifier {
 
     // Возвращение всех данных в виде Map
     return {
-      'database_stats': dbStats,
       'analytics_stats': analyticsStats,
       'session_data': sessionData,
       'model_efficiency': modelEfficiency,
