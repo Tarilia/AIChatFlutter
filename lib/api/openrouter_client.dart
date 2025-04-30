@@ -32,6 +32,40 @@ class OpenRouterClient {
     }
   }
 
+  Future<String> getBalance() async {
+    try {
+      final endpoint =
+          _baseUrl?.contains('vsegpt.ru') == true ? 'balance' : 'credits';
+
+      final response = await http.get(
+        Uri.parse('$_baseUrl/$endpoint'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['data'] != null) {
+          if (_baseUrl?.contains('vsegpt.ru') == true) {
+            // Для VSEGPT преобразуем credits в число
+            final credits =
+                double.tryParse(data['data']['credits']?.toString() ?? '0.0');
+            return '${credits?.toStringAsFixed(2) ?? '0.00'}₽';
+          } else {
+            // Для OpenRouter
+            final credits = data['data']['total_credits'] ?? 0;
+            final usage = data['data']['total_usage'] ?? 0;
+            return '\$${(credits - usage).toStringAsFixed(2)}';
+          }
+        }
+      }
+      return _baseUrl?.contains('vsegpt.ru') == true ? '0.00₽' : '\$0.00';
+    } catch (e) {
+      debugPrint('Error getting balance: $e');
+      return 'Error';
+    }
+  }
+
+  // Остальные методы остаются без изменений
   Future<List<Map<String, dynamic>>> getModels() async {
     try {
       final response = await http.get(
@@ -81,50 +115,18 @@ class OpenRouterClient {
 
       if (response.statusCode == 200) {
         return json.decode(utf8.decode(response.bodyBytes));
-      } else {
-        return {'error': 'API request failed'};
       }
+      return {'error': 'API request failed'};
     } catch (e) {
       debugPrint('Error sending message: $e');
       return {'error': e.toString()};
     }
   }
 
-  Future<String> getBalance() async {
-    try {
-      final endpoint =
-          _baseUrl?.contains('vsegpt.ru') == true ? 'balance' : 'credits';
-
-      final response = await http.get(
-        Uri.parse('$_baseUrl/$endpoint'),
-        headers: headers,
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['data'] != null) {
-          if (_baseUrl?.contains('vsegpt.ru') == true) {
-            final credits = data['data']['credits'] ?? 0.0;
-            return '${credits.toStringAsFixed(2)}₽';
-          } else {
-            final credits = data['data']['total_credits'] ?? 0;
-            final usage = data['data']['total_usage'] ?? 0;
-            return '\$${(credits - usage).toStringAsFixed(2)}';
-          }
-        }
-      }
-      return _baseUrl?.contains('vsegpt.ru') == true ? '0.00₽' : '\$0.00';
-    } catch (e) {
-      debugPrint('Error getting balance: $e');
-      return 'Error';
-    }
-  }
-
   String formatPricing(double pricing) {
     if (_baseUrl?.contains('vsegpt.ru') == true) {
       return '${pricing.toStringAsFixed(3)}₽/K';
-    } else {
-      return '\$${(pricing * 1000000).toStringAsFixed(3)}/M';
     }
+    return '\$${(pricing * 1000000).toStringAsFixed(3)}/M';
   }
 }
