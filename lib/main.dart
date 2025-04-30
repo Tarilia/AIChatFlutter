@@ -45,15 +45,7 @@ class MyApp extends StatelessWidget {
             foregroundColor: Colors.white,
           ),
         ),
-        home: Consumer<AuthProvider>(
-          builder: (context, auth, child) {
-            if (auth.isAuthenticated) {
-              return const ChatScreen();
-            } else {
-              return const AuthScreen();
-            }
-          },
-        ),
+        home: const AuthScreen(),
       ),
     );
   }

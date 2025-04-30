@@ -15,9 +15,7 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   bool get isAuthenticated => _isAuthenticated;
 
-  AuthProvider() {
-    checkAuthState();
-  }
+  AuthProvider();
 
   Future<bool> validateKey(String apiKey) async {
     try {
