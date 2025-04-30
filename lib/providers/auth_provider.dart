@@ -82,7 +82,7 @@ class AuthProvider with ChangeNotifier {
     return (random % 9000 + 1000).toString();
   }
 
-  Future<void> checkAuthState() async {
+  Future<bool> checkAuthState() async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -93,12 +93,14 @@ class AuthProvider with ChangeNotifier {
       if (apiKey != null && pin != null) {
         _apiClient.setApiKey(apiKey);
         _isAuthenticated = true;
-      } else {
-        _isAuthenticated = false;
+        return true;
       }
+      _isAuthenticated = false;
+      return false;
     } catch (e) {
       debugPrint('Error checking auth state: $e');
       _isAuthenticated = false;
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

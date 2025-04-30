@@ -27,13 +27,14 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      authProvider.checkAuthState().then((_) {
-        final hasPin = authProvider.isAuthenticated;
-        setState(() {
-          _showKeyInput = !hasPin;
-        });
+    final initialAuthProvider =
+        Provider.of<AuthProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final hasPin = await initialAuthProvider.checkAuthState();
+      if (!mounted) return;
+      setState(() {
+        _showKeyInput = !hasPin;
       });
     });
   }
@@ -104,34 +105,49 @@ class _AuthScreenState extends State<AuthScreen> {
                   ElevatedButton(
                     onPressed: authProvider.isLoading
                         ? null
-                        : () async {
-                            if (_formKey.currentState!.validate()) {
+                        : () {
+                            if (!mounted) return;
+                            final currentContext = context;
+                            final currentAuthProvider = authProvider;
+                            final currentChatProvider =
+                                Provider.of<ChatProvider>(currentContext,
+                                    listen: false);
+
+                            void handleAuth() async {
+                              if (!_formKey.currentState!.validate()) return;
+
                               if (_showKeyInput) {
-                                final success = await authProvider
+                                final success = await currentAuthProvider
                                     .validateKey(_keyController.text);
+                                if (!mounted) return;
                                 if (success) {
-                                  final chatProvider =
-                                      Provider.of<ChatProvider>(context,
-                                          listen: false);
-                                  await chatProvider.loadModels();
-                                  await chatProvider.loadBalance();
-                                  setState(() {
-                                    _showKeyInput = false;
-                                  });
+                                  await currentChatProvider.loadModels();
+                                  await currentChatProvider.loadBalance();
+                                  if (mounted) {
+                                    setState(() => _showKeyInput = false);
+                                  }
                                 }
                               } else {
-                                final success = await authProvider
+                                final success = await currentAuthProvider
                                     .validatePin(_pinController.text);
-                                if (success) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const ChatScreen(),
-                                    ),
-                                  );
+                                if (!mounted) return;
+                                if (success && mounted) {
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (mounted) {
+                                      Navigator.pushReplacement(
+                                        currentContext,
+                                        MaterialPageRoute(
+                                          builder: (_) => const ChatScreen(),
+                                        ),
+                                      );
+                                    }
+                                  });
                                 }
                               }
                             }
+
+                            handleAuth();
                           },
                     child: authProvider.isLoading
                         ? const CircularProgressIndicator()
@@ -142,11 +158,14 @@ class _AuthScreenState extends State<AuthScreen> {
                       onPressed: authProvider.isLoading
                           ? null
                           : () {
+                              if (!mounted) return;
                               authProvider.resetAuth();
-                              setState(() {
-                                _showKeyInput = true;
-                                _pinController.clear();
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  _showKeyInput = true;
+                                  _pinController.clear();
+                                });
+                              }
                             },
                       child: const Text('Сбросить ключ'),
                     ),
