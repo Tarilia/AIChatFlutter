@@ -68,6 +68,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   if (_showKeyInput)
                     TextFormField(
                       controller: _keyController,
+                      obscureText: true,
                       decoration: const InputDecoration(
                         labelText: 'API ключ',
                         border: OutlineInputBorder(),
