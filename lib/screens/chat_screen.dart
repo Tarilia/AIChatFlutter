@@ -1,5 +1,7 @@
 // Импорт основных виджетов Flutter
 import 'package:flutter/material.dart';
+// Импорт для работы с URL
+import 'package:url_launcher/url_launcher.dart';
 // Импорт для работы с системными сервисами (буфер обмена)
 import 'package:flutter/services.dart';
 // Импорт для работы с провайдерами состояния
@@ -378,21 +380,42 @@ class ChatScreen extends StatelessWidget {
   Widget _buildBalanceDisplay(BuildContext context) {
     return Consumer<ChatProvider>(
       builder: (context, chatProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 3.0),
-          child: Row(
-            children: [
-              Icon(Icons.credit_card, size: 12, color: Colors.white70),
-              const SizedBox(width: 4),
-              Text(
-                chatProvider.balance,
-                style: const TextStyle(
-                  color: Color(0xFF33CC33),
-                  fontSize: 12,
-                ),
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        return FutureBuilder<String?>(
+          future: authProvider.apiKey,
+          builder: (context, snapshot) {
+            final isVsetgpt = snapshot.data?.startsWith('sk-or-vv-') == true;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              child: Row(
+                children: [
+                  Icon(Icons.credit_card, size: 12, color: Colors.white70),
+                  const SizedBox(width: 4),
+                  Text(
+                    chatProvider.balance,
+                    style: const TextStyle(
+                      color: Color(0xFF33CC33),
+                      fontSize: 12,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add, size: 16, color: Colors.white70),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    onPressed: () async {
+                      final url = isVsetgpt
+                          ? 'https://vsegpt.ru/User/Money'
+                          : 'https://openrouter.ai/settings/credits';
+                      if (await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(Uri.parse(url));
+                      }
+                    },
+                    tooltip: 'Пополнить баланс',
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

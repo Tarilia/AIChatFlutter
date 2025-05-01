@@ -15,6 +15,8 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   bool get isAuthenticated => _isAuthenticated;
 
+  Future<String?> get apiKey async => await _dbService.getApiKey();
+
   AuthProvider();
 
   Future<bool> validateKey(String apiKey) async {
