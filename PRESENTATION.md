@@ -36,7 +36,7 @@ AIChatFlutter - кроссплатформенное мобильное прил
 
 4. **Баланс**:
    - Отображение текущего баланса
-   - Кнопка быстрого пополнения
+   - Кнопка пополнения
    - Разные валюты для провайдеров (USD/RUB)
 
 ## Технологический стек
@@ -84,35 +84,50 @@ flutter run
 
 # Сборка релизной версии
 flutter build apk --release
-
-# Запуск тестов
-flutter test
 ```
 
-### Примеры использования
-1. **Авторизация**:
-   - При первом запуске введите API ключ
-   - Получите PIN код для последующих входов
-
-2. **Работа с чатом**:
-   ```dart
-   // Отправка сообщения
-   final chatProvider = context.read<ChatProvider>();
-   chatProvider.sendMessage("Привет, как дела?");
-   ```
-
-3. **Пополнение баланса**:
-   - Нажмите "+" рядом с балансом
-   - Откроется страница пополнения соответствующего провайдера
-
 ### Скриншоты интерфейса
-1. Экран авторизации
-2. Список доступных моделей
-3. Чат с подсветкой стоимости запросов
-4. Меню статистики и экспорта
 
-### Видео демонстрация
-[Ссылка на скринкаст работы приложения]
+Экран авторизации:
+
+[![image.png](https://i.postimg.cc/g0J1Jbkx/image.png)](https://postimg.cc/FYMTWqSv)
+
+Создание пин-кода после авторизации:
+
+[![image.png](https://i.postimg.cc/PrjcDw5s/image.png)](https://postimg.cc/vD03FDn3)
+
+Далее, вход возможен по пин-коду:
+
+[![image.png](https://i.postimg.cc/bvBWSVs3/image.png)](https://postimg.cc/3y2nPBjv)
+
+При неверном пин, выводится ошибка:
+
+[![image.png](https://i.postimg.cc/zvncMJpc/image.png)](https://postimg.cc/y38j3CMm)
+
+Список доступных моделей:
+
+[![image.png](https://i.postimg.cc/vBxjr7nM/image.png)](https://postimg.cc/cgZXZnT5)
+
+
+Чат с подсветкой стоимости запросов:
+
+[![image.png](https://i.postimg.cc/Lsn0SkNf/image.png)](https://postimg.cc/FfXxgSts)
+
+Вывод аналитики:
+
+[![image.png](https://i.postimg.cc/vTRK317n/image.png)](https://postimg.cc/ygPnN8b6)
+
+Очистка чата:
+
+[![image.png](https://i.postimg.cc/mZMJhwRy/image.png)](https://postimg.cc/G9Lq5v44)
+
+Ссылка на пополнение баланса при нажатии на +:
+
+[![image.png](https://i.postimg.cc/g2cTSbhg/image.png)](https://postimg.cc/crjhCjX3)
+
+Смена ключа из меню чата при нажатии на ключ:
+
+[![image.png](https://i.postimg.cc/Z5fDXsF4/image.png)](https://postimg.cc/QFTbTbyy)
 
 ## Заключение
 Проект решает задачу удобного доступа к разным провайдерам ИИ через единый мобильный интерфейс с дополнительными функциями контроля расходов и безопасности. Использование Flutter позволяет легко расширять приложение для других платформ.
