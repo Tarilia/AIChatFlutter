@@ -100,6 +100,10 @@ flutter run
 flutter build apk --release
 ```
 
+### Видео можно посмотреть по ссылке:
+
+https://rutube.ru/video/private/33e1c62c0f0d3d6430c1654f49bd7e27/?p=wlk9x6wL2CXKx6Z649Yjog
+
 ### Скриншоты интерфейса
 
 Экран авторизации:
